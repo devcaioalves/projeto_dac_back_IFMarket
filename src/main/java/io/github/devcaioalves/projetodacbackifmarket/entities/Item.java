@@ -1,5 +1,6 @@
 package io.github.devcaioalves.projetodacbackifmarket.entities;
 
+import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusItem;
 import jakarta.persistence.*;
 import lombok.*;
 
