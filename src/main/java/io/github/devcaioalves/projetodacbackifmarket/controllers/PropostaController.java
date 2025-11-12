@@ -1,6 +1,7 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.devcaioalves.projetodacbackifmarket.docs.PropostaDoc;
 import io.github.devcaioalves.projetodacbackifmarket.dto.propostatroca.PropostaAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.propostatroca.PropostaCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.propostatroca.PropostaResponseDTO;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/br/com/ifmarket/propostamanagent/v1")
-public class PropostaController {
+public class PropostaController implements PropostaDoc {
 
     private final PropostaService propostaService;
     private final ObjectMapper objectMapper;
