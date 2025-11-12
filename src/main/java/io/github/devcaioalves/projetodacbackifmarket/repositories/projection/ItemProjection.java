@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface ItemProjection {
 
-    Long idItem;
-    String titulo;
-    String descricao;
-    Double valor;
-    Boolean disponivelTroca;
-    StatusItem status = StatusItem.DISPONIVEL;
-    LocalDateTime dataAnuncio = LocalDateTime.now();
-    Usuario usuario;
-    Categoria categoria;
-    List<FotoItem> fotos;
+    Long getIdItem();
+    String getTitulo();
+    String getDescricao();
+    Double getValor();
+    Boolean getDisponivelTroca();
+    StatusItem getStatus();
+    LocalDateTime getDataAnuncio();
+    Usuario getUsuario();
+    Categoria getCategoria();
+    List<FotoItem> getFotos();
 
 }

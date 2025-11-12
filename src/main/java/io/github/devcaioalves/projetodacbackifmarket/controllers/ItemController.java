@@ -1,6 +1,7 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.devcaioalves.projetodacbackifmarket.docs.ItemDoc;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemResponseDTO;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/br/com/ifmarket/itemmanagent/v1")
-public class ItemController {
+public class ItemController implements ItemDoc {
 
     private final ItemService itemService;
     private final ObjectMapper objectMapper;

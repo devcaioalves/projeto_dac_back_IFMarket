@@ -4,6 +4,7 @@ import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusPropos
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropostaTroca {
+public class PropostaTroca implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
