@@ -8,13 +8,13 @@ import lombok.*;
 public class UsuarioAlterDTO {
 
     @NotBlank(message = "O nome é obrigatório e não pode ser vazio.")
-    private String nome;
+    private String novoNome;
     @NotBlank(message = "O e-mail é obrigatório e não pode ser vazio.")
-    private String email;
+    private String novoEmail;
     @NotBlank(message = "A senha é obrigatória e não pode ser vazia.")
-    private String senha;
+    private String novaSenha;
     @NotBlank(message = "O telefone é obrigatório e não pode ser vazio.")
-    private String telefone;
+    private String novoTelefone;
     @NotBlank(message = "A função é obrigatória e não pode ser vazia.")
-    private Role role;
+    private Role novoRole;
 }
