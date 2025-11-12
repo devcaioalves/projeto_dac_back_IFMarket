@@ -1,9 +1,10 @@
 package io.github.devcaioalves.projetodacbackifmarket.entities;
 
-import io.github.devcaioalves.projetodacbackifmarket.entities.enums.TipoUsuario;
+import io.github.devcaioalves.projetodacbackifmarket.entities.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Usuario {
+public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +27,7 @@ public class Usuario {
     private String telefone;
 
     @Enumerated(EnumType.STRING)
-    private TipoUsuario tipoUsuario;
+    private Role role;
 
     private String matricula;
 
