@@ -4,6 +4,7 @@ import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusItem;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Item {
+public class Item implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
