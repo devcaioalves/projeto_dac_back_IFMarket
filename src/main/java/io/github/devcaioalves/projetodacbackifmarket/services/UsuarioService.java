@@ -37,14 +37,14 @@ public class UsuarioService {
     public Page<UsuarioProjection> listarTodosOsUsuarios(Pageable pageable) {
         Page<UsuarioProjection> page = usuarioRepository.findAllBy(pageable);
         if (page.isEmpty()) {
-            throw new EntityNotFoundException("No events found.");
+            throw new EntityNotFoundException("Sem usuários.");
         }
         return page;
     }
 
     public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioAlterDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Event with ID '" + id + "' not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Usuário com id '" + id + "' não encontrado."));
 
         usuario.setNome(dto.getNovoNome());
         usuario.setEmail(dto.getNovoEmail());
