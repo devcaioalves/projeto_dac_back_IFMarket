@@ -1,6 +1,6 @@
 package io.github.devcaioalves.projetodacbackifmarket.entities.enums;
 
-public enum TipoUsuario {
+public enum Role {
     ALUNO,
     PROFESSOR,
     ADMINISTRADOR,
