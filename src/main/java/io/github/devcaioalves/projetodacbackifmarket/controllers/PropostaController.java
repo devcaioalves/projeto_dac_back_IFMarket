@@ -39,7 +39,7 @@ public class PropostaController {
         return ResponseEntity.status(HttpStatus.OK).body(proposta);
     }
 
-    @GetMapping("/buscar-todas-Proposta")
+    @GetMapping("/buscar-todas-proposta")
     public ResponseEntity<Page<PropostaResponseDTO>> buscarTodasAsPropostas(@Parameter(hidden = true) Pageable pageable) {
         Page<PropostaProjection> propostas = propostaService.listarTodosAsPropostas(pageable);
         return ResponseEntity.ok(convertToDTOPage(propostas, pageable));
