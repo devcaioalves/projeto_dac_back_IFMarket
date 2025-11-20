@@ -1,6 +1,7 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.devcaioalves.projetodacbackifmarket.docs.CategoriaDoc;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaResponseDTO;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/br/com/ifmarket/categoriamanagent/v1")
-public class CategoriaController {
+public class CategoriaController implements CategoriaDoc {
 
     private final CategoriaService categoriaService;
     private final ObjectMapper objectMapper;
