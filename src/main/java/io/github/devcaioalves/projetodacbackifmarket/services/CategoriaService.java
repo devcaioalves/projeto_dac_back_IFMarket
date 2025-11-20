@@ -4,19 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemCreateDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.entities.Categoria;
-import io.github.devcaioalves.projetodacbackifmarket.entities.Item;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.CategoriaRepository;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.ItemRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.CategoriaProjection;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.ItemProjection;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
