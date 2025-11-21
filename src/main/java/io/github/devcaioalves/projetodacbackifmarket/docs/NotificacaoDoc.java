@@ -1,12 +1,9 @@
 package io.github.devcaioalves.projetodacbackifmarket.docs;
 
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.notificacao.NotificacaoAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.notificacao.NotificacaoCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.notificacao.NotificacaoResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.CategoriaProjection;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.NotificacaoProjection;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

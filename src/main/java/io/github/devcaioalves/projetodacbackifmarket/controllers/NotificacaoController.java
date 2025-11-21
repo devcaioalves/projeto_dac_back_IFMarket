@@ -1,6 +1,7 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.devcaioalves.projetodacbackifmarket.docs.NotificacaoDoc;
 import io.github.devcaioalves.projetodacbackifmarket.dto.notificacao.NotificacaoAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.notificacao.NotificacaoCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.notificacao.NotificacaoResponseDTO;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/br/com/ifmarket/notificacaomanagent/v1")
-public class NotificacaoController {
+public class NotificacaoController implements NotificacaoDoc {
 
     private final NotificacaoService notificacaoService;
     private final ObjectMapper objectMapper;
