@@ -43,7 +43,7 @@ public class FotoService {
         return page;
     }
 
-    public FotoResponseDTO atualizarCategoria(Long id, FotoAlterDTO dto) {
+    public FotoResponseDTO atualizarFoto(Long id, FotoAlterDTO dto) {
         FotoItem foto = fotoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Foto com id '" + id + "' não encontrada."));
 
