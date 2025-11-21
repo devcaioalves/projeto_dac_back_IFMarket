@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FotoRepository extends JpaRepository<FotoItem, Long> {
     Page<FotoProjection> findAllBy(Pageable pageable);
-
 }

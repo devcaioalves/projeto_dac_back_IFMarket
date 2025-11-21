@@ -1,8 +1,10 @@
 package io.github.devcaioalves.projetodacbackifmarket.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +21,7 @@ public class Categoria {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
-    private List<Item> itens;
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
+    private List<Item> itens = new ArrayList<>();
 }

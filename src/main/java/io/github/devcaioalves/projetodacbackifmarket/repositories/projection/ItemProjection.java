@@ -1,6 +1,5 @@
 package io.github.devcaioalves.projetodacbackifmarket.repositories.projection;
 
-import io.github.devcaioalves.projetodacbackifmarket.entities.*;
 import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusItem;
 
 import java.time.LocalDateTime;
@@ -15,8 +14,8 @@ public interface ItemProjection {
     Boolean getDisponivelTroca();
     StatusItem getStatus();
     LocalDateTime getDataAnuncio();
-    Usuario getUsuario();
-    Categoria getCategoria();
-    List<FotoItem> getFotos();
+    UsuarioResumoProjection getUsuario();
+    CategoriaProjection getCategoria();
+    List<FotoProjection> getFotos();
 
 }

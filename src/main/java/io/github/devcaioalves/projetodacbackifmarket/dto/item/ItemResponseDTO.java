@@ -1,8 +1,6 @@
 package io.github.devcaioalves.projetodacbackifmarket.dto.item;
 
-import io.github.devcaioalves.projetodacbackifmarket.entities.Categoria;
-import io.github.devcaioalves.projetodacbackifmarket.entities.FotoItem;
-import io.github.devcaioalves.projetodacbackifmarket.entities.Usuario;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusItem;
 import lombok.*;
 
@@ -17,10 +15,10 @@ public class ItemResponseDTO {
     private String descricao;
     private Double valor;
     private Boolean disponivelTroca;
-    private StatusItem status = StatusItem.DISPONIVEL;
-    private LocalDateTime dataAnuncio = LocalDateTime.now();
-    private Usuario usuario;
-    private Categoria categoria;
-    private List<FotoItem> fotos;
+    private StatusItem status;
+    private LocalDateTime dataAnuncio;
+    private Long usuarioId;
+    private Long categoriaId;
+    private List<FotoResponseDTO> fotos;
 
 }

@@ -1,11 +1,12 @@
 package io.github.devcaioalves.projetodacbackifmarket.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.entities.FotoItem;
+import io.github.devcaioalves.projetodacbackifmarket.entities.Item;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.FotoRepository;
+import io.github.devcaioalves.projetodacbackifmarket.repositories.ItemRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.FotoProjection;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
@@ -17,29 +18,35 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FotoService {
 
-
     private final FotoRepository fotoRepository;
-    private final ObjectMapper objectMapper;
+    private final ItemRepository itemRepository;
 
     public FotoResponseDTO criarFoto(FotoCreateDTO dto) {
 
-        FotoItem foto = objectMapper.convertValue(dto, FotoItem.class);
+        Item item = itemRepository.findById(dto.getItemId())
+                .orElseThrow(() -> new EntityNotFoundException("Item não encontrado."));
 
-        FotoItem salvaFotoItem = fotoRepository.save(foto);
-        return convertToDTO(salvaFotoItem);
+        FotoItem foto = new FotoItem();
+        foto.setCaminhoArquivo(dto.getCaminhoArquivo());
+        foto.setItem(item);
+
+        FotoItem salvaFoto = fotoRepository.save(foto);
+        return toDTO(salvaFoto);
     }
 
     public FotoResponseDTO buscarFoto(Long id) {
-        FotoItem fotoItem = fotoRepository.findById(id)
+        FotoItem foto = fotoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Foto com id '" + id + "' não encontrada."));
-        return convertToDTO(fotoItem);
+        return toDTO(foto);
     }
 
     public Page<FotoProjection> listarTodasAsFotos(Pageable pageable) {
         Page<FotoProjection> page = fotoRepository.findAllBy(pageable);
+
         if (page.isEmpty()) {
-            throw new EntityNotFoundException("Sem Fotos.");
+            throw new EntityNotFoundException("Sem fotos cadastradas.");
         }
+
         return page;
     }
 
@@ -47,11 +54,18 @@ public class FotoService {
         FotoItem foto = fotoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Foto com id '" + id + "' não encontrada."));
 
-        foto.setCaminhoArquivo(dto.getNovoCaminhoArquivo());
-        foto.setItem(dto.getNovoItem());
+        if (dto.getNovoCaminhoArquivo() != null) {
+            foto.setCaminhoArquivo(dto.getNovoCaminhoArquivo());
+        }
 
-        FotoItem fotoItemAtualizada = fotoRepository.save(foto);
-        return convertToDTO(fotoItemAtualizada);
+        if (dto.getNovoItemId() != null) {
+            Item item = itemRepository.findById(dto.getNovoItemId())
+                    .orElseThrow(() -> new EntityNotFoundException("Item não encontrado."));
+            foto.setItem(item);
+        }
+
+        FotoItem fotoAtualizada = fotoRepository.save(foto);
+        return toDTO(fotoAtualizada);
     }
 
     public void deletarFoto(Long id) {
@@ -61,8 +75,12 @@ public class FotoService {
         fotoRepository.delete(foto);
     }
 
-    private FotoResponseDTO convertToDTO(FotoItem foto) {
-        return objectMapper.convertValue(foto, FotoResponseDTO.class);
+    private FotoResponseDTO toDTO(FotoItem foto) {
+        return new FotoResponseDTO(
+                foto.getIdFoto(),
+                foto.getCaminhoArquivo(),
+                foto.getItem().getIdItem()
+        );
     }
-
 }
+

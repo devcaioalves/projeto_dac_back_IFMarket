@@ -2,6 +2,7 @@ package io.github.devcaioalves.projetodacbackifmarket.dto.usuario;
 
 import io.github.devcaioalves.projetodacbackifmarket.entities.enums.Role;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
@@ -15,6 +16,6 @@ public class UsuarioAlterDTO {
     private String novaSenha;
     @NotBlank(message = "O telefone é obrigatório e não pode ser vazio.")
     private String novoTelefone;
-    @NotBlank(message = "A função é obrigatória e não pode ser vazia.")
+    @NotNull(message = "A função é obrigatória e não pode ser vazia.")
     private Role novoRole;
 }

@@ -21,11 +21,11 @@ public class Notificacao {
     @Column(length = 500)
     private String mensagem;
 
-    private Boolean lida = false;
+    private Boolean lida;
 
     private LocalDateTime dataEnvio = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuarioDestino;
 }

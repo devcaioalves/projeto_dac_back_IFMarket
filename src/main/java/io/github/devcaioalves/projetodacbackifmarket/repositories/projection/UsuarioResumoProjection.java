@@ -1,8 +1,8 @@
 package io.github.devcaioalves.projetodacbackifmarket.repositories.projection;
 
-public interface CategoriaProjection {
+public interface UsuarioResumoProjection {
 
-    Long getIdCategoria();
+    Long getIdUsuario();
     String getNome();
 
 }
