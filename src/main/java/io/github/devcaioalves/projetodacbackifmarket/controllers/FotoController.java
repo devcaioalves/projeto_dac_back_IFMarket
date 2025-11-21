@@ -1,6 +1,9 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.devcaioalves.projetodacbackifmarket.docs.FotoDoc;
+import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaCreateDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoResponseDTO;
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/br/com/ifmarket/fotomanagent/v1")
-public class FotoController {
+public class FotoController implements FotoDoc {
     private final FotoService fotoService;
     private final ObjectMapper objectMapper;
 
@@ -30,6 +33,11 @@ public class FotoController {
     public ResponseEntity<FotoResponseDTO> criarFoto(@RequestBody @Valid FotoCreateDTO fotoCreateDTO) {
         FotoResponseDTO foto = fotoService.criarFoto(fotoCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(foto);
+    }
+
+    @Override
+    public ResponseEntity<CategoriaResponseDTO> criarCategoria(CategoriaCreateDTO categoriaCreateDTO) {
+        return null;
     }
 
     @GetMapping("/buscar-Foto/{id}")
