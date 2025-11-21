@@ -1,9 +1,9 @@
 package io.github.devcaioalves.projetodacbackifmarket.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoCreateDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoResponseDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoAlterDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoCreateDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.entities.FotoItem;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.FotoRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.FotoProjection;

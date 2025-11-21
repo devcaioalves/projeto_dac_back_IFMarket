@@ -1,11 +1,8 @@
 package io.github.devcaioalves.projetodacbackifmarket.docs;
 
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaCreateDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.CategoriaProjection;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoAlterDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoCreateDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.FotoProjection;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface FotoDoc {
 
     @Operation(
-            summary = "Cria uma nova Foto",
+            summary = "Cria uma nova foto",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Foto criada com sucesso.", content = @Content(
                             mediaType = "application/json",
@@ -36,10 +33,10 @@ public interface FotoDoc {
                     ))
             }
     )
-    ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody @Valid CategoriaCreateDTO categoriaCreateDTO);
+    ResponseEntity<FotoResponseDTO> criarFoto(@RequestBody @Valid FotoCreateDTO fotoCreateDTO);
 
     @Operation(
-            summary = "Buscar Foto pelo ID",
+            summary = "Buscar foto pelo ID",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Foto encontrada.", content = @Content(
                             mediaType = "application/json",
@@ -54,9 +51,9 @@ public interface FotoDoc {
     ResponseEntity<FotoResponseDTO> buscarFoto(@PathVariable Long id);
 
     @Operation(
-            summary = "Listar todas as Fotos",
+            summary = "Listar todas as fotos",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de Fotos retornada.", content = @Content(
+                    @ApiResponse(responseCode = "200", description = "Lista de fotos retornada.", content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = FotoProjection.class)
                     )),

@@ -2,11 +2,9 @@ package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.devcaioalves.projetodacbackifmarket.docs.FotoDoc;
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaCreateDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.categoria.CategoriaResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoCreateDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem.FotoResponseDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoAlterDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoCreateDTO;
+import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.FotoProjection;
 import io.github.devcaioalves.projetodacbackifmarket.services.FotoService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/br/com/ifmarket/fotomanagent/v1")
 public class FotoController implements FotoDoc {
+
     private final FotoService fotoService;
     private final ObjectMapper objectMapper;
 
@@ -35,12 +34,7 @@ public class FotoController implements FotoDoc {
         return ResponseEntity.status(HttpStatus.CREATED).body(foto);
     }
 
-    @Override
-    public ResponseEntity<CategoriaResponseDTO> criarCategoria(CategoriaCreateDTO categoriaCreateDTO) {
-        return null;
-    }
-
-    @GetMapping("/buscar-Foto/{id}")
+    @GetMapping("/buscar-foto/{id}")
     public ResponseEntity<FotoResponseDTO> buscarFoto(@PathVariable Long id) {
         FotoResponseDTO foto = fotoService.buscarFoto(id);
         return ResponseEntity.status(HttpStatus.OK).body(foto);

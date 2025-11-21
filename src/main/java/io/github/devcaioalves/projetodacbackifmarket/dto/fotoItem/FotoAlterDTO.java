@@ -1,4 +1,4 @@
-package io.github.devcaioalves.projetodacbackifmarket.dto.fotoitem;
+package io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem;
 
 import io.github.devcaioalves.projetodacbackifmarket.entities.Item;
 import jakarta.validation.constraints.NotBlank;
