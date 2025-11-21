@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class addNotificacaoAlterDTO {
+public class NotificacaoAlterDTO {
 
     @NotBlank(message = "O titulo é obrigatório e não pode ser vazio.")
     private String novoTitulo;
@@ -23,3 +23,4 @@ public class addNotificacaoAlterDTO {
     @NotBlank(message = "o nome do usuario destino é obrigatório e não pode ser vazio.")
     private Usuario novoUsuarioDestino;
 }
+
