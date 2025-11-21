@@ -8,7 +8,7 @@ public interface NotificacaoProjection {
     String getTitulo();
     String getMensagem();
     Boolean getLida();
-    LocalDateTime getDataEnvio = LocalDateTime.now();
+    LocalDateTime getDataEnvio();
     UsuarioResumoProjection getUsuarioDestino();
 
 }
