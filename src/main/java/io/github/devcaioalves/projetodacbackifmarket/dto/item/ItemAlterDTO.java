@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
-
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class ItemAlterDTO {
 
@@ -19,5 +17,4 @@ public class ItemAlterDTO {
     private Boolean novaDisponibilidadeTroca;
     private StatusItem novoStatus;
     private Long novaCategoriaId;
-    private List<Long> novasFotos;
 }

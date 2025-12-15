@@ -5,17 +5,21 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-@Getter @Setter @AllArgsConstructor @NoArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsuarioAlterDTO {
 
     @NotBlank(message = "O nome é obrigatório e não pode ser vazio.")
     private String novoNome;
+
     @NotBlank(message = "O e-mail é obrigatório e não pode ser vazio.")
     private String novoEmail;
+
     @NotBlank(message = "A senha é obrigatória e não pode ser vazia.")
-    private String novaSenha;
-    @NotBlank(message = "O telefone é obrigatório e não pode ser vazio.")
     private String novoTelefone;
+
     @NotNull(message = "A função é obrigatória e não pode ser vazia.")
     private Role novoRole;
 }
