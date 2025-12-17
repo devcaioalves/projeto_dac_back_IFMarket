@@ -10,7 +10,6 @@ import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusPropos
 import io.github.devcaioalves.projetodacbackifmarket.repositories.ItemRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.PropostaRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.UsuarioRepository;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.PropostaProjection;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,18 +27,13 @@ public class PropostaService {
     private final UsuarioRepository usuarioRepository;
 
     public PropostaResponseDTO criarProposta(PropostaCreateDTO dto) {
+        Item itemOfertante = buscaItem(dto.getItemOfertante(), "Item ofertante não encontrado.");
+        Item itemDestino   = buscaItem(dto.getItemDestino(), "Item destino não encontrado.");
 
-        Item itemOfertante = itemRepository.findById(dto.getItemOfertante())
-                .orElseThrow(() -> new EntityNotFoundException("Item ofertante não encontrado."));
+        Usuario usuarioOfertante = buscaUsuario(dto.getUsuarioOfertante(), "Usuário ofertante não encontrado.");
+        Usuario usuarioDestino   = buscaUsuario(dto.getUsuarioDestino(), "Usuário destino não encontrado.");
 
-        Item itemDestino = itemRepository.findById(dto.getItemDestino())
-                .orElseThrow(() -> new EntityNotFoundException("Item destino não encontrado."));
-
-        Usuario usuarioOfertante = usuarioRepository.findById(dto.getUsuarioOfertante())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário ofertante não encontrado."));
-
-        Usuario usuarioDestino = usuarioRepository.findById(dto.getUsuarioDestino())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário destino não encontrado."));
+        validarProposta(itemOfertante, itemDestino, usuarioOfertante, usuarioDestino);
 
         PropostaTroca proposta = PropostaTroca.builder()
                 .itemOfertante(itemOfertante)
@@ -51,63 +45,83 @@ public class PropostaService {
                 .dataProposta(LocalDateTime.now())
                 .build();
 
-        PropostaTroca salva = propostaRepository.save(proposta);
-        return toResponseDTO(salva);
+        return toResponseDTO(propostaRepository.save(proposta));
     }
 
     public PropostaResponseDTO buscarProposta(Long id) {
-        PropostaTroca proposta = propostaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Proposta não encontrada."));
-        return toResponseDTO(proposta);
+        return toResponseDTO(buscaProposta(id));
     }
 
-    public Page<PropostaProjection> listarTodosAsPropostas(Pageable pageable) {
-        Page<PropostaProjection> page = propostaRepository.findAllBy(pageable);
+    public Page<PropostaResponseDTO> listarTodasPropostas(Pageable pageable) {
+        Page<PropostaTroca> page = propostaRepository.findAll(pageable);
 
         if (page.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma proposta encontrada.");
         }
-        return page;
+
+        return page.map(this::toResponseDTO);
     }
 
     public PropostaResponseDTO atualizarProposta(Long id, PropostaAlterDTO dto) {
-
-        PropostaTroca proposta = propostaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Proposta não encontrada."));
+        PropostaTroca proposta = buscaProposta(id);
 
         if (dto.getNovoItemOfertante() != null) {
-            Item novoItem = itemRepository.findById(dto.getNovoItemOfertante())
-                    .orElseThrow(() -> new EntityNotFoundException("Item ofertante não encontrado."));
-            proposta.setItemOfertante(novoItem);
+            proposta.setItemOfertante(buscaItem(dto.getNovoItemOfertante(), "Item ofertante não encontrado."));
         }
 
         if (dto.getNovoItemDestino() != null) {
-            Item novoItem = itemRepository.findById(dto.getNovoItemDestino())
-                    .orElseThrow(() -> new EntityNotFoundException("Item destino não encontrado."));
-            proposta.setItemDestino(novoItem);
+            proposta.setItemDestino(buscaItem(dto.getNovoItemDestino(), "Item destino não encontrado."));
         }
 
         if (dto.getNovoUsuarioDestino() != null) {
-            Usuario novoUsuario = usuarioRepository.findById(dto.getNovoUsuarioDestino())
-                    .orElseThrow(() -> new EntityNotFoundException("Usuário destino não encontrado."));
-            proposta.setUsuarioDestino(novoUsuario);
+            proposta.setUsuarioDestino(buscaUsuario(dto.getNovoUsuarioDestino(), "Usuário destino não encontrado."));
         }
 
-        if (dto.getNovoStatus() != null)
+        if (dto.getNovoStatus() != null) {
             proposta.setStatus(dto.getNovoStatus());
+        }
 
-        if (dto.getNovoValorDiferenca() != null)
+        if (dto.getNovoValorDiferenca() != null) {
             proposta.setValorDiferenca(dto.getNovoValorDiferenca());
+        }
 
-        PropostaTroca atualizada = propostaRepository.save(proposta);
-        return toResponseDTO(atualizada);
+        return toResponseDTO(propostaRepository.save(proposta));
     }
 
     public void deletarProposta(Long id) {
-        PropostaTroca proposta = propostaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Proposta não encontrada."));
+        propostaRepository.delete(buscaProposta(id));
+    }
 
-        propostaRepository.delete(proposta);
+    // 🔎 Métodos auxiliares
+
+    private Item buscaItem(Long id, String mensagemErro) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(mensagemErro));
+    }
+
+    private Usuario buscaUsuario(Long id, String mensagemErro) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(mensagemErro));
+    }
+
+    private PropostaTroca buscaProposta(Long id) {
+        return propostaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Proposta não encontrada."));
+    }
+
+    private void validarProposta(Item itemOfertante, Item itemDestino,
+                                 Usuario usuarioOfertante, Usuario usuarioDestino) {
+        if (usuarioOfertante.getIdUsuario().equals(usuarioDestino.getIdUsuario())) {
+            throw new IllegalArgumentException("Não é possível propor troca com você mesmo.");
+        }
+
+        if (!itemOfertante.getUsuario().getIdUsuario().equals(usuarioOfertante.getIdUsuario())) {
+            throw new IllegalArgumentException("O item ofertante não pertence ao usuário ofertante.");
+        }
+
+        if (!itemDestino.getUsuario().getIdUsuario().equals(usuarioDestino.getIdUsuario())) {
+            throw new IllegalArgumentException("O item destino não pertence ao usuário destino.");
+        }
     }
 
     private PropostaResponseDTO toResponseDTO(PropostaTroca p) {
@@ -117,6 +131,10 @@ public class PropostaService {
                 p.getItemDestino().getIdItem(),
                 p.getUsuarioOfertante().getIdUsuario(),
                 p.getUsuarioDestino().getIdUsuario(),
+                p.getItemOfertante().getTitulo(),
+                p.getItemDestino().getTitulo(),
+                p.getUsuarioOfertante().getNome(),
+                p.getUsuarioDestino().getNome(),
                 p.getValorDiferenca(),
                 p.getStatus(),
                 p.getDataProposta()

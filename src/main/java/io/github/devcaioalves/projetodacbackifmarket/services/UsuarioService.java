@@ -80,7 +80,6 @@ public class UsuarioService {
             usuario.setEmail(dto.getNovoEmail());
         }
         if (campoValido(dto.getNovoTelefone())) usuario.setTelefone(dto.getNovoTelefone());
-        if (dto.getNovoRole() != null) usuario.setRole(dto.getNovoRole());
 
         return toResponseDTO(usuarioRepository.save(usuario));
     }

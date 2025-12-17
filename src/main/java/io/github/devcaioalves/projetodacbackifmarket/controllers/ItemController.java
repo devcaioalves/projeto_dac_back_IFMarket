@@ -1,24 +1,20 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.devcaioalves.projetodacbackifmarket.docs.ItemDoc;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.ItemProjection;
 import io.github.devcaioalves.projetodacbackifmarket.services.ItemService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +22,6 @@ import java.util.stream.Collectors;
 public class ItemController implements ItemDoc {
 
     private final ItemService itemService;
-    private final ObjectMapper objectMapper;
 
     @PostMapping("/criar-item")
     public ResponseEntity<ItemResponseDTO> criarItem(@RequestBody @Valid ItemCreateDTO itemCreateDTO) {
@@ -40,10 +35,29 @@ public class ItemController implements ItemDoc {
         return ResponseEntity.status(HttpStatus.OK).body(item);
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ItemResponseDTO>> buscarProdutos(@RequestParam String termo) {
+        List<ItemResponseDTO> encontrados = itemService.buscarPorTitulo(termo);
+        return ResponseEntity.ok(encontrados);
+    }
+
     @GetMapping("/buscar-todos-itens")
-    public ResponseEntity<Page<ItemResponseDTO>> buscarTodosItens(@Parameter(hidden = true) Pageable pageable) {
-        Page<ItemProjection> itens = itemService.listarTodosOsItens(pageable);
-        return ResponseEntity.ok(convertToDTOPage(itens, pageable));
+    public ResponseEntity<Page<ItemResponseDTO>> buscarTodosItens(
+            @Parameter(hidden = true) Pageable pageable,
+            @RequestParam(required = false) Long categoriaId) {
+
+        Page<ItemResponseDTO> itens = itemService.listarTodosOsItens(pageable, categoriaId);
+        return ResponseEntity.ok(itens);
+    }
+
+    @GetMapping("/buscar-todos-itens-usuario/{usuarioId}")
+    public ResponseEntity<Page<ItemResponseDTO>> buscarTodosItensUsuario(
+            @Parameter(hidden = true) Pageable pageable,
+            @RequestParam(required = false) Long categoriaId,
+            @PathVariable Long usuarioId) {
+
+        Page<ItemResponseDTO> itens = itemService.listarTodosOsItensUsuario(pageable, categoriaId, usuarioId);
+        return ResponseEntity.ok(itens);
     }
 
     @PutMapping("/atualizar-item/{id}")
@@ -53,17 +67,9 @@ public class ItemController implements ItemDoc {
     }
 
     @DeleteMapping("/deleta-item/{id}")
-    public ResponseEntity<ItemResponseDTO> deletarItem(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarItem(@PathVariable Long id) {
         itemService.deletarItem(id);
         return ResponseEntity.noContent().build();
     }
-
-    private Page<ItemResponseDTO> convertToDTOPage(Page<ItemProjection> itens, Pageable pageable) {
-        List<ItemResponseDTO> content = itens.getContent().stream()
-                .map(post -> objectMapper.convertValue(post, ItemResponseDTO.class))
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(content, pageable, itens.getTotalElements());
-    }
-
 }
+

@@ -11,15 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class UsuarioAlterDTO {
 
-    @NotBlank(message = "O nome é obrigatório e não pode ser vazio.")
     private String novoNome;
-
-    @NotBlank(message = "O e-mail é obrigatório e não pode ser vazio.")
     private String novoEmail;
-
-    @NotBlank(message = "A senha é obrigatória e não pode ser vazia.")
     private String novoTelefone;
-
-    @NotNull(message = "A função é obrigatória e não pode ser vazia.")
-    private Role novoRole;
 }

@@ -13,6 +13,7 @@ public class ItemCreateDTO {
     private String descricao;
     @NotNull(message = "O valor é obrigatório e não pode ser vazio.")
     private Double valor;
+    private String cidade;
     private Boolean disponivelTroca;
     private Long usuarioId;
     private Long categoriaId;

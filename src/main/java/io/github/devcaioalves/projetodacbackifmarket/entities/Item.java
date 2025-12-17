@@ -28,6 +28,8 @@ public class Item implements Serializable {
 
     private Double valor;
 
+    private String cidade;
+
     private Boolean disponivelTroca;
 
     @Enumerated(EnumType.STRING)

@@ -14,7 +14,7 @@ public class ItemAlterDTO {
     private String novaDescricao;
     @NotNull(message = "O valor é obrigatório e não pode ser vazio.")
     private Double novoValor;
+    private String novaCidade;
     private Boolean novaDisponibilidadeTroca;
-    private StatusItem novoStatus;
     private Long novaCategoriaId;
 }
