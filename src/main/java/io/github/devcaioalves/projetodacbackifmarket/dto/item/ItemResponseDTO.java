@@ -14,6 +14,7 @@ public class ItemResponseDTO {
     private String titulo;
     private String descricao;
     private Double valor;
+    private String cidade;
     private Boolean disponivelTroca;
     private StatusItem status;
     private LocalDateTime dataAnuncio;

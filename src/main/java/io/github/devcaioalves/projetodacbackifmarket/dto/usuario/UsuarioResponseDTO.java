@@ -12,4 +12,5 @@ public class UsuarioResponseDTO {
     private String telefone;
     private Role role;
     private String matricula;
+    private String mensagemErro;
 }

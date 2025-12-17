@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
-
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class ItemAlterDTO {
 
@@ -16,8 +14,7 @@ public class ItemAlterDTO {
     private String novaDescricao;
     @NotNull(message = "O valor é obrigatório e não pode ser vazio.")
     private Double novoValor;
+    private String novaCidade;
     private Boolean novaDisponibilidadeTroca;
-    private StatusItem novoStatus;
     private Long novaCategoriaId;
-    private List<Long> novasFotos;
 }

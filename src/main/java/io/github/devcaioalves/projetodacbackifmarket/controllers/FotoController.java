@@ -1,24 +1,14 @@
 package io.github.devcaioalves.projetodacbackifmarket.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.devcaioalves.projetodacbackifmarket.docs.FotoDoc;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoAlterDTO;
-import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.fotoItem.FotoResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.FotoProjection;
 import io.github.devcaioalves.projetodacbackifmarket.services.FotoService;
-import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,44 +16,28 @@ import java.util.stream.Collectors;
 public class FotoController implements FotoDoc {
 
     private final FotoService fotoService;
-    private final ObjectMapper objectMapper;
 
-    @PostMapping("/criar-foto")
-    public ResponseEntity<FotoResponseDTO> criarFoto(@RequestBody @Valid FotoCreateDTO fotoCreateDTO) {
-        FotoResponseDTO foto = fotoService.criarFoto(fotoCreateDTO);
+    @PostMapping(
+            value = "/criar-foto",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<FotoResponseDTO> criarFoto(
+            @RequestParam("arquivo") MultipartFile arquivo,
+            @RequestParam("itemId") Long itemId
+    ) {
+        FotoResponseDTO foto = fotoService.criarFoto(arquivo, itemId);
         return ResponseEntity.status(HttpStatus.CREATED).body(foto);
     }
 
     @GetMapping("/buscar-foto/{id}")
     public ResponseEntity<FotoResponseDTO> buscarFoto(@PathVariable Long id) {
-        FotoResponseDTO foto = fotoService.buscarFoto(id);
-        return ResponseEntity.status(HttpStatus.OK).body(foto);
-    }
-
-    @GetMapping("/buscar-todas-fotos")
-    public ResponseEntity<Page<FotoResponseDTO>> buscarTodasFotos(@Parameter(hidden = true) Pageable pageable) {
-        Page<FotoProjection> fotos = fotoService.listarTodasAsFotos(pageable);
-        return ResponseEntity.ok(convertToDTOPage(fotos, pageable));
-    }
-
-    @PutMapping("/atualizar-foto/{id}")
-    public ResponseEntity<FotoResponseDTO> atualizarFoto(@PathVariable Long id, @RequestBody @Valid FotoAlterDTO dto) {
-        FotoResponseDTO foto = fotoService.atualizarFoto(id, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(foto);
+        return ResponseEntity.ok(fotoService.buscarFoto(id));
     }
 
     @DeleteMapping("/deleta-foto/{id}")
-    public ResponseEntity<FotoResponseDTO> deletarFoto(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarFoto(@PathVariable Long id) {
         fotoService.deletarFoto(id);
         return ResponseEntity.noContent().build();
     }
-
-    private Page<FotoResponseDTO> convertToDTOPage(Page<FotoProjection> fotos, Pageable pageable) {
-        List<FotoResponseDTO> content = fotos.getContent().stream()
-                .map(post -> objectMapper.convertValue(post, FotoResponseDTO.class))
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(content, pageable, fotos.getTotalElements());
-    }
-
 }
+

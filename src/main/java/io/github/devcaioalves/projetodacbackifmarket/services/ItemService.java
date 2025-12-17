@@ -5,23 +5,22 @@ import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemResponseDTO;
 import io.github.devcaioalves.projetodacbackifmarket.entities.Categoria;
-import io.github.devcaioalves.projetodacbackifmarket.entities.FotoItem;
 import io.github.devcaioalves.projetodacbackifmarket.entities.Item;
 import io.github.devcaioalves.projetodacbackifmarket.entities.Usuario;
 import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusItem;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.CategoriaRepository;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.FotoRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.ItemRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.UsuarioRepository;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.ItemProjection;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +29,11 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UsuarioRepository usuarioRepository;
     private final CategoriaRepository categoriaRepository;
-    private final FotoRepository fotoRepository;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     public ItemResponseDTO criarItem(ItemCreateDTO dto) {
-
         Usuario usuario = buscaUsuario(dto.getUsuarioId());
         Categoria categoria = buscaCategoria(dto.getCategoriaId());
 
@@ -41,6 +41,7 @@ public class ItemService {
                 .titulo(dto.getTitulo())
                 .descricao(dto.getDescricao())
                 .valor(dto.getValor())
+                .cidade(dto.getCidade())
                 .disponivelTroca(dto.getDisponivelTroca())
                 .status(StatusItem.DISPONIVEL)
                 .dataAnuncio(LocalDateTime.now())
@@ -49,13 +50,6 @@ public class ItemService {
                 .build();
 
         Item saved = itemRepository.save(item);
-
-        if (dto.getFotos() != null && !dto.getFotos().isEmpty()) {
-            List<FotoItem> fotos = fotoRepository.findAllById(dto.getFotos());
-            fotos.forEach(f -> f.setItem(saved));
-            saved.setFotos(fotos);
-        }
-
         return toResponseDTO(saved);
     }
 
@@ -63,38 +57,70 @@ public class ItemService {
         return toResponseDTO(buscaItem(id));
     }
 
-    public Page<ItemProjection> listarTodosOsItens(Pageable pageable) {
-        Page<ItemProjection> page = itemRepository.findAllBy(pageable);
-        if (page.isEmpty()) throw new EntityNotFoundException("Sem itens cadastrados");
-        return page;
+    public Page<ItemResponseDTO> listarTodosOsItens(Pageable pageable, Long categoriaId) {
+        Page<Item> itens;
+
+        if (categoriaId != null) {
+            itens = itemRepository.findAllByCategoriaIdCategoria(categoriaId, pageable);
+        } else {
+            itens = itemRepository.findAllBy(pageable);
+        }
+
+        if (itens.isEmpty()) {
+            throw new EntityNotFoundException("Sem itens cadastrados");
+        }
+
+        return itens.map(this::toResponseDTO);
     }
 
-    public ItemResponseDTO atualizarItem(Long id, ItemAlterDTO dto) {
+    public Page<ItemResponseDTO> listarTodosOsItensUsuario(Pageable pageable, Long categoriaId, Long usuarioId) {
+        Page<Item> itens;
 
+        if (categoriaId != null && usuarioId != null) {
+            // busca por categoria e usuário
+            itens = itemRepository.findAllByCategoriaIdCategoriaAndUsuarioIdUsuario(categoriaId, usuarioId, pageable);
+        } else if (categoriaId != null) {
+            // busca só por categoria
+            itens = itemRepository.findAllByCategoriaIdCategoria(categoriaId, pageable);
+        } else if (usuarioId != null) {
+            // busca só por usuário
+            itens = itemRepository.findAllByUsuarioIdUsuario(usuarioId, pageable);
+        } else {
+            // busca todos
+            itens = itemRepository.findAll(pageable);
+        }
+
+        if (itens.isEmpty()) {
+            throw new EntityNotFoundException("Sem itens cadastrados");
+        }
+
+        return itens.map(this::toResponseDTO);
+    }
+
+
+    public ItemResponseDTO atualizarItem(Long id, ItemAlterDTO dto) {
         Item item = buscaItem(id);
 
         if (dto.getNovoTitulo() != null) item.setTitulo(dto.getNovoTitulo());
         if (dto.getNovaDescricao() != null) item.setDescricao(dto.getNovaDescricao());
         if (dto.getNovoValor() != null) item.setValor(dto.getNovoValor());
-        if (dto.getNovaDisponibilidadeTroca() != null) item.setDisponivelTroca(dto.getNovaDisponibilidadeTroca());
-        if (dto.getNovoStatus() != null) item.setStatus(dto.getNovoStatus());
+        if (dto.getNovaCidade() != null) item.setCidade(dto.getNovaCidade());
+        if (dto.getNovaDisponibilidadeTroca() != null)
+            item.setDisponivelTroca(dto.getNovaDisponibilidadeTroca());
 
         if (dto.getNovaCategoriaId() != null) {
             Categoria novaCategoria = buscaCategoria(dto.getNovaCategoriaId());
             item.setCategoria(novaCategoria);
         }
 
-        List<FotoItem> fotosAtuais = item.getFotos();
-        fotosAtuais.clear(); // remove fotos antigas (orphanRemoval cuida de deletar do DB)
-
-        if (dto.getNovasFotos() != null) {
-            List<FotoItem> novasFotos = fotoRepository.findAllById(dto.getNovasFotos());
-            // garante que cada foto tenha referência ao item
-            novasFotos.forEach(f -> f.setItem(item));
-            fotosAtuais.addAll(novasFotos);
-        }
-
         return toResponseDTO(itemRepository.save(item));
+    }
+
+    public List<ItemResponseDTO> buscarPorTitulo(String termo) {
+        List<Item> itens = itemRepository.findAllByTituloContainingIgnoreCase(termo);
+        return itens.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public void deletarItem(Long id) {
@@ -103,35 +129,47 @@ public class ItemService {
 
     private Item buscaItem(Long id) {
         return itemRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Item com id '" + id + "' não encontrado."));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Item com id '" + id + "' não encontrado."));
     }
 
     private Usuario buscaUsuario(Long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Usuário não encontrado"));
     }
 
     private Categoria buscaCategoria(Long id) {
         return categoriaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Categoria não encontrada"));
     }
 
-    private ItemResponseDTO toResponseDTO(Item item) {
+    /** Converte entidade Item em DTO */
+    public ItemResponseDTO toResponseDTO(Item item) {
+        List<FotoResponseDTO> fotosDTO = (item.getFotos() != null && !item.getFotos().isEmpty())
+                ? item.getFotos().stream()
+                .map(f -> new FotoResponseDTO(
+                        f.getIdFoto(),
+                        baseUrl + "/" + f.getCaminhoArquivo().replace("\\", "/"),
+                        item.getIdItem()
+                ))
+                .toList()
+                : List.of();
+
         return new ItemResponseDTO(
                 item.getIdItem(),
                 item.getTitulo(),
                 item.getDescricao(),
                 item.getValor(),
+                item.getCidade(),
                 item.getDisponivelTroca(),
                 item.getStatus(),
                 item.getDataAnuncio(),
                 item.getUsuario().getIdUsuario(),
                 item.getCategoria().getIdCategoria(),
-                item.getFotos() != null
-                        ? item.getFotos().stream()
-                        .map(f -> new FotoResponseDTO(f.getIdFoto(), f.getCaminhoArquivo(), f.getItem().getIdItem()))
-                        .toList()
-                        : List.of()
+                fotosDTO
         );
     }
 }
+

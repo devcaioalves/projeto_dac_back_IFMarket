@@ -3,7 +3,6 @@ package io.github.devcaioalves.projetodacbackifmarket.docs;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemAlterDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemCreateDTO;
 import io.github.devcaioalves.projetodacbackifmarket.dto.item.ItemResponseDTO;
-import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.ItemProjection;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public interface ItemDoc {
 
@@ -55,7 +55,7 @@ public interface ItemDoc {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Lista de itens retornada.", content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ItemProjection.class)
+                            schema = @Schema(implementation = ItemResponseDTO.class)
                     )),
                     @ApiResponse(responseCode = "404", description = "Itens não encontrados.", content = @Content(
                             mediaType = "application/json",
@@ -63,7 +63,9 @@ public interface ItemDoc {
                     ))
             }
     )
-    ResponseEntity<Page<ItemResponseDTO>> buscarTodosItens(@Parameter(hidden = true) Pageable pageable);
+    ResponseEntity<Page<ItemResponseDTO>> buscarTodosItens(
+            @Parameter(hidden = true) Pageable pageable,
+            @RequestParam(required = false) Long categoriaId);
 
     @Operation(
             summary = "Atualizar Item",
@@ -90,6 +92,6 @@ public interface ItemDoc {
                     ))
             }
     )
-    ResponseEntity<ItemResponseDTO> deletarItem(@PathVariable Long id);
+    ResponseEntity<Void> deletarItem(@PathVariable Long id);
 
 }

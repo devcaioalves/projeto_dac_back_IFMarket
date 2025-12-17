@@ -1,4 +1,4 @@
-package io.github.devcaioalves.projetodacbackifmarket.dto.pegeable;
+package io.github.devcaioalves.projetodacbackifmarket.dto.pageable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
