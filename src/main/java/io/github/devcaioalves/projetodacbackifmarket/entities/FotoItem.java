@@ -16,7 +16,7 @@ public class FotoItem {
 
     private String caminhoArquivo;
 
-    @ManyToOne
-    @JoinColumn(name = "id_item")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_item", nullable = false)
     private Item item;
 }

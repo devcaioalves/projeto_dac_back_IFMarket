@@ -2,30 +2,26 @@ package io.github.devcaioalves.projetodacbackifmarket.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notificacao {
+public class SenhaResetToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idNotificacao;
+    private Long id;
 
-    private String titulo;
+    @Column(nullable = false, unique = true)
+    private String token;
 
-    @Column(length = 500)
-    private String mensagem;
-
-    private Boolean lida;
-
-    private LocalDateTime dataEnvio = LocalDateTime.now();
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuarioDestino;
+    private Usuario usuario;
+
+    private LocalDateTime expiracao;
 }

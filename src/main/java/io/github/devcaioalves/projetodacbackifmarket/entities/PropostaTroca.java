@@ -4,6 +4,7 @@ import io.github.devcaioalves.projetodacbackifmarket.entities.enums.StatusPropos
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,32 +12,36 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropostaTroca {
+public class PropostaTroca implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idProposta;
 
-    @ManyToOne
-    @JoinColumn(name = "id_item_ofertante")
+    // item ofertado
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_item_ofertante", nullable = false)
     private Item itemOfertante;
 
-    @ManyToOne
-    @JoinColumn(name = "id_item_destino")
+    // item destino
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_item_destino", nullable = false)
     private Item itemDestino;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario_ofertante")
+    // autor da proposta
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario_ofertante", nullable = false)
     private Usuario usuarioOfertante;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario_destino")
+    // dono do item destino
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario_destino", nullable = false)
     private Usuario usuarioDestino;
 
     private Double valorDiferenca;
 
     @Enumerated(EnumType.STRING)
-    private StatusProposta status = StatusProposta.PENDENTE;
+    private StatusProposta status;
 
     private LocalDateTime dataProposta = LocalDateTime.now();
 }
