@@ -8,13 +8,16 @@ import io.github.devcaioalves.projetodacbackifmarket.dto.usuario.login.LoginDTO;
 import io.github.devcaioalves.projetodacbackifmarket.entities.SenhaResetToken;
 import io.github.devcaioalves.projetodacbackifmarket.entities.Usuario;
 import io.github.devcaioalves.projetodacbackifmarket.entities.enums.Role;
+import io.github.devcaioalves.projetodacbackifmarket.jwt.JwtToken;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.SenhaResetTokenRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.UsuarioRepository;
 import io.github.devcaioalves.projetodacbackifmarket.repositories.projection.UsuarioProjection;
+import io.github.devcaioalves.projetodacbackifmarket.jwt.JwtUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +62,11 @@ public class UsuarioService {
 
     public UsuarioResponseDTO buscarUsuario(Long id) {
         return toResponseDTO(findUsuarioById(id));
+    }
+
+    public Usuario buscarUsuarioPeloEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
     }
 
     public Page<UsuarioProjection> listarTodosOsUsuarios(Pageable pageable) {
@@ -113,19 +121,24 @@ public class UsuarioService {
             throw new IllegalArgumentException("Identificador e senha são obrigatórios.");
         }
 
-        // tenta encontrar por email ou matrícula (passa o mesmo valor para ambos)
         Usuario usuario = usuarioRepository
                 .findByEmailOrMatricula(dto.getIdentificador(), dto.getIdentificador())
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
 
-        // compara com bcrypt
         if (!passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
             throw new IllegalArgumentException("Credenciais inválidas.");
         }
 
-        // retorna DTO sem senha
-        return toResponseDTO(usuario);
+        // gera o JWT
+        JwtToken jwtToken = JwtUtils.gerarToken(usuario.getIdUsuario(), usuario.getEmail(), usuario.getRole().name());
+
+        // monta o DTO e adiciona o token e expiração
+        UsuarioResponseDTO dtoResponse = toResponseDTO(usuario);
+        dtoResponse.setToken(jwtToken.getToken());
+
+        return dtoResponse;
     }
+
 
     private void validarEmailAcademico(String email) {
         if (!campoValido(email)) {
@@ -224,5 +237,11 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
 
         tokenRepository.delete(reset);
+    }
+
+    public Usuario buscarPorIdentificador(String identificador) {
+        return usuarioRepository
+                .findByEmailOrMatricula(identificador, identificador)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
     }
 }
