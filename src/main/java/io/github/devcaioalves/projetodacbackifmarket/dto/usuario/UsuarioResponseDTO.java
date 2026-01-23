@@ -13,4 +13,5 @@ public class UsuarioResponseDTO {
     private Role role;
     private String matricula;
     private String mensagemErro;
+    private String token;
 }
